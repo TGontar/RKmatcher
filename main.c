@@ -5,12 +5,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <windows.h>
 
-#define MAX_PATH_LENGTH 256 // Максимальная длина пути файла
-#define d 256 // Размер алфавита d
-#define q 4294967295 // Максимальное значение для unsigned int
+#define MAX_PATH_LENGTH 256 // РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° РїСѓС‚Рё С„Р°Р№Р»Р°
+#define d 256 // Р Р°Р·РјРµСЂ Р°Р»С„Р°РІРёС‚Р° d
+#define q 4294967295 // РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РґР»СЏ unsigned int
 
-// Алгоритм Рабина-Карпа для поиска подстроки в строке
+// РђР»РіРѕСЂРёС‚Рј Р Р°Р±РёРЅР°-РљР°СЂРїР° РґР»СЏ РїРѕРёСЃРєР° РїРѕРґСЃС‚СЂРѕРєРё РІ СЃС‚СЂРѕРєРµ
 void searchRabinKarp(char *pattern, char *text, char *currentdir, int stringnumber) {
     int m = strlen(pattern);
     int n = strlen(text);
@@ -18,17 +19,17 @@ void searchRabinKarp(char *pattern, char *text, char *currentdir, int stringnumb
     unsigned current_hash = 0;
     unsigned max_deg = 1;
 
-    // Предварительное вычисление максимальной степени полинома, чтобы потом эффективнее работал алгоритм
+    // РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РІС‹С‡РёСЃР»РµРЅРёРµ РјР°РєСЃРёРјР°Р»СЊРЅРѕР№ СЃС‚РµРїРµРЅРё РїРѕР»РёРЅРѕРјР°, С‡С‚РѕР±С‹ РїРѕС‚РѕРј СЌС„С„РµРєС‚РёРІРЅРµРµ СЂР°Р±РѕС‚Р°Р» Р°Р»РіРѕСЂРёС‚Рј
     for (int i = 0; i < m - 1; i++)
         max_deg = (max_deg * d) % q;
 
-    // Вычисление хеш-значения для шаблона и для первой подстроки длиной m в тексте
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ С…РµС€-Р·РЅР°С‡РµРЅРёСЏ РґР»СЏ С€Р°Р±Р»РѕРЅР° Рё РґР»СЏ РїРµСЂРІРѕР№ РїРѕРґСЃС‚СЂРѕРєРё РґР»РёРЅРѕР№ m РІ С‚РµРєСЃС‚Рµ
     for (int i = 0; i < m; i++) {
         pattern_hash = (d * pattern_hash + pattern[i]) % q;
         current_hash = (d * current_hash + text[i]) % q;
     }
 
-    // Поиск шаблона в тексте
+    // РџРѕРёСЃРє С€Р°Р±Р»РѕРЅР° РІ С‚РµРєСЃС‚Рµ
     for (int i = 0; i <= (n - m); i++) {
         if (pattern_hash == current_hash) {
             int flag = 0;
@@ -41,29 +42,29 @@ void searchRabinKarp(char *pattern, char *text, char *currentdir, int stringnumb
             }
 
             if (flag == 0)
-                printf("Шаблон найден: в файле %s, строка %d, позиция %d\n", currentdir, stringnumber, i);
+                printf("РЁР°Р±Р»РѕРЅ РЅР°Р№РґРµРЅ: РІ С„Р°Р№Р»Рµ %s, СЃС‚СЂРѕРєР° %d, РїРѕР·РёС†РёСЏ %d\n", currentdir, stringnumber, i);
         }
 
-        // Вычисление нового хэша для следующей итерации
+        // Р’С‹С‡РёСЃР»РµРЅРёРµ РЅРѕРІРѕРіРѕ С…СЌС€Р° РґР»СЏ СЃР»РµРґСѓСЋС‰РµР№ РёС‚РµСЂР°С†РёРё
         if (i < n - m) {
             current_hash = (d * (current_hash - text[i] * max_deg) + text[i + m]) % q;
         }
     }
 }
 
-// Рекурсивный поиск в папках
+// Р РµРєСѓСЂСЃРёРІРЅС‹Р№ РїРѕРёСЃРє РІ РїР°РїРєР°С…
 void searchSubstringInFiles(char *pattern, char *dirpath, int recursive) {
     DIR *dir;
     struct dirent *entry;
 
-    // Открытие директории
+    // РћС‚РєСЂС‹С‚РёРµ РґРёСЂРµРєС‚РѕСЂРёРё
     dir = opendir(dirpath);
     if (dir == NULL) {
-        printf("Не удалось открыть запрашиваемую директорию: %s\n", dirpath);
+        printf("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ Р·Р°РїСЂР°С€РёРІР°РµРјСѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ: %s\n", dirpath);
         return;
     }
 
-    // Поиск подстроки в каждом файле и директории
+    // РџРѕРёСЃРє РїРѕРґСЃС‚СЂРѕРєРё РІ РєР°Р¶РґРѕРј С„Р°Р№Р»Рµ Рё РґРёСЂРµРєС‚РѕСЂРёРё
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
@@ -73,20 +74,20 @@ void searchSubstringInFiles(char *pattern, char *dirpath, int recursive) {
 
         struct stat st;
         if (stat(filepath, &st) == -1) {
-            printf("Ошибка при получении информации о файле: %s\n", filepath);
+            printf("РћС€РёР±РєР° РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РёРЅС„РѕСЂРјР°С†РёРё Рѕ С„Р°Р№Р»Рµ: %s\n", filepath);
             continue;
         }
 
-        if (S_ISDIR(st.st_mode) && recursive == 1) { // Если это директория, рекурсивно вызываем функцию для нее
+        if (S_ISDIR(st.st_mode) && recursive == 1) { // Р•СЃР»Рё СЌС‚Рѕ РґРёСЂРµРєС‚РѕСЂРёСЏ, СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј С„СѓРЅРєС†РёСЋ РґР»СЏ РЅРµРµ
             searchSubstringInFiles(pattern, filepath, recursive);
-        } else if (S_ISREG(st.st_mode)) { // Если это файл, выполняем поиск подстроки
+        } else if (S_ISREG(st.st_mode)) { // Р•СЃР»Рё СЌС‚Рѕ С„Р°Р№Р», РІС‹РїРѕР»РЅСЏРµРј РїРѕРёСЃРє РїРѕРґСЃС‚СЂРѕРєРё
             FILE *file = fopen(filepath, "r");
             if (file == NULL) {
-                printf("Не удалось открыть файл: %s\n", filepath);
+                printf("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»: %s\n", filepath);
                 continue;
             }
 
-            // Поиск подстроки в файле
+            // РџРѕРёСЃРє РїРѕРґСЃС‚СЂРѕРєРё РІ С„Р°Р№Р»Рµ
             char text[1024];
             int currentstring = 1;
             while (fgets(text, sizeof(text), file) != NULL) {
@@ -101,24 +102,24 @@ void searchSubstringInFiles(char *pattern, char *dirpath, int recursive) {
     closedir(dir);
 }
 
-//вывести сообщение об ошибке на экран
+//РІС‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ РЅР° СЌРєСЂР°РЅ
 void displayIncorrectInput() {
-    printf("Неверный ввод аргументов, использование: rkmatcher [-r] \"шаблон\" \"путь директории\"\n");
-    printf("-r: выполнять ли рекурсивный поиск всех поддиректорий, необязательный флаг\n");
-    printf("\"шаблон\" - для поиска во всех файлах директории, обязательный параметр\n");
-    printf("\"путь директории\" - путь к папке, в которой необходимо произвести поиск, обязательный параметр\n");
+    printf("РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ Р°СЂРіСѓРјРµРЅС‚РѕРІ, РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ: rkmatcher [-r] \"С€Р°Р±Р»РѕРЅ\" \"РїСѓС‚СЊ РґРёСЂРµРєС‚РѕСЂРёРё\"\n");
+    printf("-r: РІС‹РїРѕР»РЅСЏС‚СЊ Р»Рё СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ РїРѕРёСЃРє РІСЃРµС… РїРѕРґРґРёСЂРµРєС‚РѕСЂРёР№, РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ С„Р»Р°Рі\n");
+    printf("\"С€Р°Р±Р»РѕРЅ\" - РґР»СЏ РїРѕРёСЃРєР° РІРѕ РІСЃРµС… С„Р°Р№Р»Р°С… РґРёСЂРµРєС‚РѕСЂРёРё, РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ\n");
+    printf("\"РїСѓС‚СЊ РґРёСЂРµРєС‚РѕСЂРёРё\" - РїСѓС‚СЊ Рє РїР°РїРєРµ, РІ РєРѕС‚РѕСЂРѕР№ РЅРµРѕР±С…РѕРґРёРјРѕ РїСЂРѕРёР·РІРµСЃС‚Рё РїРѕРёСЃРє, РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ\n");
 }
 
-//превратить символ ~ в адрес текущей директории
+//РїСЂРµРІСЂР°С‚РёС‚СЊ СЃРёРјРІРѕР» ~ РІ Р°РґСЂРµСЃ С‚РµРєСѓС‰РµР№ РґРёСЂРµРєС‚РѕСЂРёРё
 char *parseHomeDir(char *path) {
     if (path[0] == '~') {
         char cwd[4096];
         if (getcwd(cwd, sizeof(cwd)) == NULL) {
-            perror("Ошибка при получении текущей директории");
+            perror("РћС€РёР±РєР° РїСЂРё РїРѕР»СѓС‡РµРЅРёРё С‚РµРєСѓС‰РµР№ РґРёСЂРµРєС‚РѕСЂРёРё");
             return 0;
         }
 
-        size_t resultLen = strlen(cwd) + strlen(path) - 1; // Итоговая длина строки
+        size_t resultLen = strlen(cwd) + strlen(path) - 1; // РС‚РѕРіРѕРІР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё
         char *result = malloc(resultLen + 1);
         strncpy(result, cwd, strlen(cwd));
         strncpy(result + strlen(cwd), path + 1, strlen(path) - 1);
@@ -131,7 +132,7 @@ char *parseHomeDir(char *path) {
 }
 
 int main(int count, char *argv[]) {
-    setlocale(LC_ALL, "Russian");
+    system("chcp 65001");
 
     if (count < 3 || count > 4) {
         displayIncorrectInput();
