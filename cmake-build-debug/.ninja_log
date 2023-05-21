@@ -1,0 +1,6 @@
+# ninja log v5
+2	102	7063750579171572	CMakeFiles/Rabin_Karp.dir/main.c.obj	5e79c4da976e5224
+103	207	7063753253198813	Rabin_Karp.exe	5fc7a99514e705ed
+1	102	7063753252144405	CMakeFiles/Rabin_Karp.dir/rkmatcher.c.obj	677b7d3aab5d9805
+0	92	7063753742056522	CMakeFiles/Rabin_Karp.dir/main.c.obj	5e79c4da976e5224
+96	206	7063753743164996	Rabin_Karp.exe	bd0fcdfbe21b9bf8
