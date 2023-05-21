@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <windows.h>
+//#include <windows.h>
 
 #define MAX_PATH_LENGTH 256 // Максимальная длина пути файла
 #define d 256 // Размер алфавита d
@@ -132,8 +132,8 @@ char *parseHomeDir(char *path) {
 }
 
 int main(int count, char *argv[]) {
-    system("chcp 65001");
-
+//    system("chcp 65001");
+    setlocale(LC_ALL, "");
     if (count < 3 || count > 4) {
         displayIncorrectInput();
 
